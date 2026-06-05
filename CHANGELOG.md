@@ -1,3 +1,16 @@
+Unreleased
+- Added per-mob `kill-commands:` hook in `mobsconfig.yml`. When a Power Mob dies, an
+  optional list of commands runs in order. All entries are dispatched from the
+  server console (full permissions); each entry's `at:` field (`mob` default,
+  or `killer`) selects where `~ ~ ~` and other relative coords anchor — under the
+  hood the plugin wraps the command in a vanilla `execute in <dim> positioned ...`
+  or `execute at <killer>`. Each entry supports `chance` (default 1.0) and the
+  outer block has a `player-required:` flag (default `true`) that skips the
+  block when there is no player killer. Commands accept the placeholders
+  `{player}`, `{player_uuid}`, `{world}`, `{dimension}`, `{x}`, `{y}`, `{z}`,
+  `{mob_id}`, and `{mob_name}`. The field is optional; existing configs load
+  unchanged. See `bounty-bandit` in `mobsconfig.yml` for a worked example.
+
 V1.3.1 - 5/19/2026
 - Added structure-based spawn conditions for Power Mobs! This includes support for structures
 in most datapacks.

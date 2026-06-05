@@ -1,7 +1,10 @@
 package com.powermobs.events;
 
 import com.powermobs.PowerMobsPlugin;
+import com.powermobs.config.PowerMobConfig;
 import com.powermobs.mobs.PowerMob;
+import com.powermobs.mobs.killcommands.KillCommandsConfig;
+import com.powermobs.mobs.killcommands.KillCommandsDispatcher;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -40,12 +43,23 @@ public class MobDeathListener implements Listener {
         // Process drops using the drop handler
         plugin.getDropHandler().processDrops(powerMob, killer, entity.getLocation());
 
+        // Run configured kill commands (no-op when section absent or empty)
+        KillCommandsConfig killCommands = resolveKillCommands(powerMob);
+        if (killCommands != null) {
+            KillCommandsDispatcher.dispatch(plugin, killCommands, powerMob.getId(), entity, killer);
+        }
+
         // Clean up tracking data AFTER processing drops
         plugin.getDamageTracker().cleanupMob(powerMob.getEntityUuid());
 
         // Unregister the power mob
         powerMob.remove();
         this.plugin.getPowerMobManager().unregisterPowerMob(powerMob);
+    }
+
+    private KillCommandsConfig resolveKillCommands(PowerMob powerMob) {
+        PowerMobConfig cfg = this.plugin.getConfigManager().getPowerMob(powerMob.getId());
+        return cfg != null ? cfg.getKillCommands() : null;
     }
 
 }

@@ -2,6 +2,7 @@ package com.powermobs.config;
 
 import com.powermobs.PowerMobsPlugin;
 import com.powermobs.mobs.equipment.CustomDropConfig;
+import com.powermobs.mobs.killcommands.KillCommandsConfig;
 import com.powermobs.utils.WeightedRandom;
 import lombok.Getter;
 import lombok.Setter;
@@ -45,6 +46,7 @@ public class PowerMobConfig implements IPowerMobConfig {
     private int experienceMaxAmount;
     private int experienceWeight;
     private SpawnCondition spawnCondition;
+    private KillCommandsConfig killCommands;
 
     /**
      * Creates a new power mob configuration
@@ -237,6 +239,8 @@ public class PowerMobConfig implements IPowerMobConfig {
             PowerMobsPlugin.getInstance().getLogger().warning("Invalid spawn condition structure: " + structureWarning);
         }
 
+        // Kill commands
+        this.killCommands = KillCommandsConfig.fromSection(id, section.getConfigurationSection("kill-commands"));
     }
 
     public PowerMobConfig(PowerMobConfig powerMob) {
@@ -282,6 +286,7 @@ public class PowerMobConfig implements IPowerMobConfig {
         this.experienceWeight = powerMob.getExperienceWeight();
         this.drops = new ArrayList<>(powerMob.getDrops());
         this.spawnCondition = new SpawnCondition(powerMob.getSpawnCondition());
+        this.killCommands = powerMob.getKillCommands();
     }
 
     /**
@@ -341,6 +346,7 @@ public class PowerMobConfig implements IPowerMobConfig {
 
 
         this.spawnCondition = new SpawnCondition();
+        this.killCommands = KillCommandsConfig.empty();
     }
 
     public Map<String, Object> toConfigMap() {
@@ -457,6 +463,11 @@ public class PowerMobConfig implements IPowerMobConfig {
 
         // Spawn conditions
         map.put("spawn-conditions", this.spawnCondition.toConfigMap());
+
+        // Kill commands (only emit when configured, to keep diffs minimal for existing mobs)
+        if (this.killCommands != null && !this.killCommands.isEmpty()) {
+            map.put("kill-commands", this.killCommands.toConfigMap());
+        }
 
         return map;
     }
