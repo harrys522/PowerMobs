@@ -62,8 +62,31 @@ You can also override these settings per mob:
 
 - **Random mobs** (`config.yml`): `possible-abilities:` for selection.
 
+### Kill Commands
 
-Priority order is: Per-mod defined → defaults from `abilitiesconfig.yml` → plugin defeind values.
+Optionally define commands to run when custom mobs are killed (`kill-commands:`), such as:
+
+  - `say §3Frost Archer was defeated`
+  - `summon lightning ~ ~ ~` 
+  - Any available commands (including other plugins!), this is a generic integration hook that can trigger quests, economy, broadcasts, etc.
+
+Where the relative coordinates (if applicable) are defined by the `at:` block as either the killer or mob.
+
+Each `kill-commands:` entry supports:
+- `command`: the command text (a leading `/` is allowed)
+- `chance`: probability this entry fires, 0.0–1.0 (default 1.0)
+- `at`: position anchor for `~ ~ ~` and selectors — `mob` (default) or `killer`
+
+Block-level options:
+- `player-required`: only fire the block when a player killed the mob (default true)
+
+Placeholders substituted in the command text:
+- `{player}`, `{player_uuid}` — the killer (empty if none)
+- `{world}`, `{dimension}` — death location's world name and dimension key
+- `{x}`, `{y}`, `{z}` — integer block coords of death
+- `{mob_id}`, `{mob_name}` — config key and display name (color codes stripped)
+
+All entries dispatch with console-level / operator permissions; `at:` only sets the position context for `~ ~ ~` and selectors. See the `# --- KILL COMMANDS ---` block at the top of `mobsconfig.yml` for the full schema, and the `bounty-bandit` mob at the bottom of that file for a working example.
 
 ## In-game UI
 Most random-mob settings and many mob options can be edited in-game through the GUI pages.

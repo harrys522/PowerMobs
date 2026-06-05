@@ -186,6 +186,30 @@
 #                               # Values like: DAY, NIGHT
 #                               # Empty or missing = any time.
 
+# --- KILL COMMANDS ---
+# kill-commands:                # Map (OPTIONAL) - Commands to run when this mob dies.
+#                               # Absent = unchanged behavior.
+#   player-required:            # Boolean (OPTIONAL) - Default true.
+#                               # true  = whole block only runs if a player killed the mob.
+#                               # false = also fires on environmental deaths ({player} resolves to "").
+#
+#   commands:                   # List[Map] - Each entry runs in order, after drops/exp.
+#     - command: "<text>"       # String (REQUIRED) - Command text. Leading "/" is allowed.
+#                               # Placeholders (substituted before dispatch):
+#                               #   {player}       killer's name ("" if none)
+#                               #   {player_uuid}  killer's UUID ("" if none)
+#                               #   {world}        world name (e.g. "world_nether")
+#                               #   {dimension}    dimension key (e.g. "minecraft:the_nether")
+#                               #   {x} {y} {z}    integer block coords of death
+#                               #   {mob_id}       this mob's config key
+#                               #   {mob_name}     custom display name (color codes stripped)
+#       chance: 1.0             # Number (OPTIONAL) - 0.0-1.0 firing probability (default 1.0, clamped).
+#       at: mob                 # String (OPTIONAL) - mob | killer. Default mob.
+#                               # mob    = anchored at the mob's death location & dimension.
+#                               # killer = anchored at the killer's location; skipped if killer absent/offline.
+#                               # All entries dispatch with console permissions; 'at' only sets the
+#                               # position context for '~ ~ ~' / selectors via an execute wrapper.
+
 # ===============================
 # NOTES / BEST PRACTICES
 # ===============================
@@ -871,3 +895,51 @@ power-mobs:
           - LUSH_CAVES
       time:
         - NIGHT
+  bounty-bandit:
+    type: PILLAGER
+    name: '&6&lBounty Bandit'
+    health: '60'
+    health-weight: 100
+    damage-multiplier: '1.5'
+    damage-weight: 100
+    speed-multiplier: '1.1'
+    speed-weight: 100
+    attributes: {}
+    abilities: {}
+    possible-equipment:
+      possible-weapons:
+        - item: CROSSBOW-1
+      possible-offhands: []
+      possible-helmets: []
+      possible-chestplates: []
+      possible-leggings: []
+      possible-boots: []
+    glowing: false
+    glow-time: '100'
+    drop-count: 0-1
+    drop-weight: 100
+    exp-chance: 1.0
+    exp-amount: 20-30
+    exp-weight: 100
+    drops:
+      - item: EMERALD-1
+        chance: 1.0
+        amount: 1-3
+        amount-weight: 100
+    spawn-conditions:
+      spawn-chance: 0.005
+      spawn-delay: 1200-2400
+      spawn-delay-weight: 100
+      replace-type-only: true
+      despawn-time: '1800'
+      dimensions:
+        - OVERWORLD
+    kill-commands:
+      player-required: true
+      commands:
+        - command: "broadcast &6{player} &fclaimed the bounty on the &6{mob_name}&f at {x},{y},{z} in {world}"
+        - command: "give {player} minecraft:emerald 5"
+        - command: "give {player} minecraft:diamond 1"
+          chance: 0.5
+        - command: "summon minecraft:lightning_bolt ~ ~ ~"
+          chance: 0.25

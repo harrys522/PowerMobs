@@ -1,3 +1,12 @@
+Unreleased
+- Added per-mob `kill-commands:` hook in `mobsconfig.yml`. When a Power Mob dies, an
+  optional list of console (or killer) commands runs in order. Each entry supports
+  `chance` and an `as: console | player` selector, plus an outer `player-required:`
+  flag (default `true`) that skips the block when the mob wasn't killed by a player.
+  Commands accept the placeholders `{player}`, `{player_uuid}`, `{world}`, `{x}`,
+  `{y}`, `{z}`, `{mob_id}`, and `{mob_name}`. The field is optional; existing
+  configs load unchanged. See `bounty-bandit` in `mobsconfig.yml` for an example.
+
 V1.3.1 - 5/19/2026
 - Added structure-based spawn conditions for Power Mobs! This includes support for structures
 in most datapacks.
